@@ -12,15 +12,6 @@ char RX_ADDRESS[] = "0013A200417EE50D";
 char WASPMOTE_ID[] = "node_01";
 // error variable
 uint8_t error;
-/*//PAN ID
-uint8_t  panID[2] = {0x12,0x34};
-//Freq channel
-uint8_t  channel = 0x0F;
-//encryption mode
-uint8_t encryptionMode = 0;
-// AES 16-byte Encryption Key
-char  encryptionKey[] = "TheLinkKey!";*/
-
 
 
 void setup_pir() {
@@ -37,67 +28,6 @@ void setup_pir() {
   Events.attachInt();
 }
 
-void print_pres(uint8_t v) {
-  // Print the info
-  if (v == 1) 
-  {
-    USB.println(F("Sensor output: Presence detected"));
-  } 
-  else 
-  {
-    USB.println(F("Sensor output: Presence not detected"));
-  } 
-}
-
-void get_print_bme280() {
-  float temp = Events.getTemperature();
-  float humd = Events.getHumidity();
-  float pres = Events.getPressure();
-
-  USB.println("-----------------------------");
-  USB.println("           BME280");
-  USB.println("-----------------------------");
-  USB.print("Temperature: ");
-  USB.printFloat(temp, 2);
-  USB.println(F(" Celsius"));
-  USB.print("Humidity: ");
-  USB.printFloat(humd, 1); 
-  USB.println(F(" %")); 
-  USB.print("Pressure: ");
-  USB.printFloat(pres, 2); 
-  USB.println(F(" Pa")); 
-  USB.println("-----------------------------");
-}
-
-void acc_alarm() {
-  // print info
-  ACC.unsetFF();
-  USB.ON();
-  USB.println(F("++++++++++++++++++++++++++++"));
-  USB.println(F("++ ACC interrupt detected ++"));
-  USB.println(F("++++++++++++++++++++++++++++")); 
-  USB.println();
-
-  // blink LEDs
-  for(int i=0; i<10; i++) {
-    Utils.blinkLEDs(50);
-  } 
- }
-
- 
-void rtc_alarm() {
-  USB.ON();  
-  USB.println(F("-------------------------"));
-  USB.println(F("RTC INT Captured"));
-  USB.println(F("-------------------------"));
-
-  get_print_bme280();
-    
-  // blink LEDs
-  for(int i=0; i<10; i++) {
-    Utils.blinkLEDs(50);
-  }
-}
 
 
 void setup() {
@@ -119,7 +49,7 @@ void setup() {
 
   //Turn on events board
   Events.ON();
-
+  //init PIR
   setup_pir();
 
   // store Waspmote identifier in EEPROM memory
@@ -127,14 +57,11 @@ void setup() {
   
   // init XBee
   xbee802.ON();
-  /*set_channel();
-  set_PAN();
-  crypto_mode();
-  xbee_w();*/
 }
 
 
 void loop() {
+  //create ASCII message frame
   frame.createFrame(ASCII);
   //fre fall detection
   if( intFlag & ACC_INT ) {
@@ -153,12 +80,11 @@ void loop() {
       /Utils.blinkRedLED();
     
     } else {
-      USB.println(F("send error"));
-    
-      // blink red LED
-      //Utils.blinkRedLED();
+      //print error message
+      USB.println(F("send error"));    
     }
-  }  
+  }
+
   //PIR detection
   uint8_t v = pir.readPirSensor();
   if (v == 1) {
@@ -171,19 +97,16 @@ void loop() {
     if( error == 0 ) {
       USB.println(F("send ok"));
     
-      // blink green LED
+      // blink red LED
       Utils.blinkRedLED();
     
     } else {
-      USB.println(F("send error"));
-    
-      // blink red LED
-      //Utils.blinkRedLED();
+      USB.println(F("send error"));    
     }
   }
 
   Utils.blinkGreenLED();
-   
+  //add sensor values to message frame
   frame.addSensor(SENSOR_BAT, PWR.getBatteryLevel());
   frame.addSensor(SENSOR_ACC, ACC.getX(), ACC.getY(), ACC.getZ());
   float temp = Events.getTemperature();
@@ -202,16 +125,12 @@ void loop() {
     USB.println(F("send ok"));
     
     // blink green LED
-    Utils.blinkRedLED();
-    
+    Utils.blinkRedLED();    
   }
   else 
   {
     USB.println(F("send error"));
-    
-    // blink red LED
-    //Utils.blinkRedLED();
   }
+  //wait 30s
   delay(30000);
 }
-

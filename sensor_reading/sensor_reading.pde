@@ -1,3 +1,13 @@
+/*
+    Mario Vuksa
+    Sensor Networks
+    GROUP 22
+
+    Explanation: Measuring environmental parameters by sensors and sending by Zigbee
+
+    Máster IoT-UPM
+*/
+
 #include <WaspSensorEvent_v30.h>
 #include <WaspXBee802.h>
 #include <WaspFrame.h>

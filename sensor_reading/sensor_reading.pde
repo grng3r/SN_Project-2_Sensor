@@ -143,19 +143,20 @@ void loop() {
     frame.addSensor(SENSOR_STR, "FREE FALL");
     // send XBee packet
     error = xbee802.send( RX_ADDRESS, frame.buffer, frame.length );   
-  
+    Utils.blinkRedLED();
+
     // check TX flag
     if( error == 0 ) {
       USB.println(F("send ok"));
     
       // blink green LED
-      Utils.blinkGreenLED();
+      /Utils.blinkRedLED();
     
     } else {
       USB.println(F("send error"));
     
       // blink red LED
-      Utils.blinkRedLED();
+      //Utils.blinkRedLED();
     }
   }  
   //PIR detection
@@ -164,22 +165,25 @@ void loop() {
     frame.addSensor(SENSOR_STR, "PRESENCE");
     // send XBee packet
     error = xbee802.send( RX_ADDRESS, frame.buffer, frame.length );   
-  
+    Utils.blinkRedLED();
+
     // check TX flag
     if( error == 0 ) {
       USB.println(F("send ok"));
     
       // blink green LED
-      Utils.blinkGreenLED();
+      Utils.blinkRedLED();
     
     } else {
       USB.println(F("send error"));
     
       // blink red LED
-      Utils.blinkRedLED();
+      //Utils.blinkRedLED();
     }
   }
-  
+
+  Utils.blinkGreenLED();
+   
   frame.addSensor(SENSOR_BAT, PWR.getBatteryLevel());
   frame.addSensor(SENSOR_ACC, ACC.getX(), ACC.getY(), ACC.getZ());
   float temp = Events.getTemperature();
@@ -198,7 +202,7 @@ void loop() {
     USB.println(F("send ok"));
     
     // blink green LED
-    Utils.blinkGreenLED();
+    Utils.blinkRedLED();
     
   }
   else 
@@ -206,68 +210,8 @@ void loop() {
     USB.println(F("send error"));
     
     // blink red LED
-    Utils.blinkRedLED();
+    //Utils.blinkRedLED();
   }
-  /*//USB.println();
-  //USB.println();
-  // Getting time
-  USB.print(F("Time: "));
-  USB.println(RTC.getTime());
-   
-  //enter sleep mode
-  USB.println(F("enter sleep"));
-  
-  PWR.deepSleep("00:00:00:12", RTC_OFFSET, RTC_ALM1_MODE1, ALL_OFF);
-  
-  // Getting Alarm1
-  USB.print(F("Alarm: "));
-  USB.println(RTC.getAlarm1());
-  //xbee conf
-  //get_xbee_conf();
-
-  ACC.ON();
-
-  //Events.ON();
-
-  //ACC alarm
-  if( intFlag & ACC_INT ) {
-    intFlag &= ~(ACC_INT);
-    acc_alarm();
-  }
-  
-  // RTC alarm
-  if( intFlag & RTC_INT ) {
-    // clear interruption flag
-    intFlag &= ~(RTC_INT);
-    rtc_alarm();
-  }
-
-  //Check interruption from Sensor Board
-  if (intFlag & SENS_INT) {
-    // Disable interruptions from the board
-    Events.detachInt();
-    
-    // Load the interruption flag
-    Events.loadInt();
-    
-    // In case the interruption came from PIR
-    if (pir.getInt()) {
-      USB.println(F("-----------------------------"));
-      USB.println(F("Interruption from PIR"));
-      USB.println(F("-----------------------------"));
-    }    
-
-     // Read the PIR Sensor
-    uint8_t v = pir.readPirSensor();
-    print_pres(v);
-    
-    // Clean the interruption flag
-    intFlag &= ~(SENS_INT);
-    
-    // Enable interruptions from the board
-    Events.attachInt();
-  } 
-  PWR.clearInterruptionPin();*/
-  delay(5000);
+  delay(30000);
 }
 

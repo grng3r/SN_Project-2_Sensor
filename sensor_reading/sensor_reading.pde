@@ -30,23 +30,11 @@ void setup_pir() {
 
 
 
-void setup() {
-  
+void setup() {  
   // Setup for Serial port over USB
   USB.ON();
-   // Init RTC and set up time and date
-  RTC.ON();
-
   //init ACC and enable free fall
   ACC.ON();
-
- 
-  // Setting time [yy:mm:dd:dow:hh:mm:ss]
-  RTC.setTime("22:01:29:03:17:35:30"); 
-
-  // Setting Alarm1
-  RTC.setAlarm1("00:00:00:30",RTC_OFFSET,RTC_ALM1_MODE5);
-
   //Turn on events board
   Events.ON();
   //init PIR
